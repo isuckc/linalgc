@@ -3,7 +3,7 @@ CXX      ?= c++
 PYTHON   ?= python3
 
 BUILD_DIR := build
-INC_FLAGS := -Iinclude -Itests
+INC_FLAGS := -Iinclude -isystem tests
 
 WARN_FLAGS := -Wall -Wextra -Wpedantic -Werror
 C_STD      := -std=c99
@@ -71,15 +71,15 @@ amalgamate:
 
 test-amalgamation: amalgamate $(BUILD_DIR)
 	@echo "[AMALGAMATION C99 header-only]"
-	$(CC) $(C_STD) $(WARN_FLAGS) -I. -Itests $(OPT_FLAGS) tests/test_amalgamation.c -o $(BUILD_DIR)/test_amalg_c $(LDFLAGS)
+	$(CC) $(C_STD) $(WARN_FLAGS) -I. -isystem tests $(OPT_FLAGS) tests/test_amalgamation.c -o $(BUILD_DIR)/test_amalg_c $(LDFLAGS)
 	./$(BUILD_DIR)/test_amalg_c
 	@echo "[AMALGAMATION C99 multi-TU separate impl]"
-	$(CC) $(C_STD) $(WARN_FLAGS) -I. -Itests $(OPT_FLAGS) -DLA_SEPARATE_IMPL -c tests/test_amalgamation.c -o $(BUILD_DIR)/amalg_main.o
-	$(CC) $(C_STD) $(WARN_FLAGS) -I. -Itests $(OPT_FLAGS) -DLA_SEPARATE_IMPL -DLINALG_IMPLEMENTATION -c tests/test_amalgamation_impl.c -o $(BUILD_DIR)/amalg_impl.o
+	$(CC) $(C_STD) $(WARN_FLAGS) -I. -isystem tests $(OPT_FLAGS) -DLA_SEPARATE_IMPL -c tests/test_amalgamation.c -o $(BUILD_DIR)/amalg_main.o
+	$(CC) $(C_STD) $(WARN_FLAGS) -I. -isystem tests $(OPT_FLAGS) -DLA_SEPARATE_IMPL -DLINALG_IMPLEMENTATION -c tests/test_amalgamation_impl.c -o $(BUILD_DIR)/amalg_impl.o
 	$(CC) $(BUILD_DIR)/amalg_main.o $(BUILD_DIR)/amalg_impl.o -o $(BUILD_DIR)/test_amalg_multitu $(LDFLAGS)
 	./$(BUILD_DIR)/test_amalg_multitu
 	@echo "[AMALGAMATION C++17]"
-	$(CXX) $(CXX_STD) $(WARN_FLAGS) -I. -Itests $(OPT_FLAGS) tests/test_cpp.cpp -DLA_USE_AMALGAMATION=1 -o $(BUILD_DIR)/test_amalg_cpp $(LDFLAGS)
+	$(CXX) $(CXX_STD) $(WARN_FLAGS) -I. -isystem tests $(OPT_FLAGS) tests/test_cpp.cpp -DLA_USE_AMALGAMATION=1 -o $(BUILD_DIR)/test_amalg_cpp $(LDFLAGS)
 	./$(BUILD_DIR)/test_amalg_cpp
 
 bench: $(BUILD_DIR)
