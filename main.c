@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <stddef.h>
 #include <stdio.h>
 
@@ -14,11 +15,14 @@ struct Matrix {
 static float mat_at(const struct Matrix *mat, const size_t row,
                     const size_t col) {
   if (!mat)
-    return 0.0f;
+    assert(1);
 
-  size_t pos = row * col;
-  if (pos >= mat->rows * mat->cols)
-    return 0.0f;
+  if (!mat->values)
+    assert(1);
+
+  size_t pos = row * mat->cols + col;
+  if (pos >= mat->rows * mat->cols || row >= mat->rows || col >= mat->cols)
+    assert(1);
 
   return mat->values[pos];
 }
